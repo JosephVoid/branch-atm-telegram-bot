@@ -1,5 +1,6 @@
-const { Telegraf, Markup } = require('telegraf');
-const dotenv = require('dotenv');
+import { Telegraf, Markup } from 'telegraf';
+import dotenv from 'dotenv';
+import { updateFID, getClosestATMs, getClosestBranches } from './api.js';
 
 dotenv.config();
 
@@ -39,17 +40,43 @@ bot.hears('ATM', (ctx) => {
   );
 });
 
-bot.command('D@SH_upload', async (ctx) => {
-  if (process.env.ADM === ctx.message.from.id) {
-    ctx.reply('Upload');
+bot.on('photo', async (ctx) => {
+  if (process.env.ADMN === `${ctx.message.from.id}`) {
+    const fileId = ctx.message.photo[0].file_id;
+    const photoType = ctx.message.caption[0].toLocaleLowerCase() ?? '';
+    const entityId = ctx.message.caption.split(' ')[1] ?? '';
+
+    if (await updateFID(entityId, photoType, fileId)) {
+      ctx.reply('Updated!');
+    } else {
+      ctx.reply('Something went wrong!');
+    }
   }
 });
 
 bot.on('location', async (ctx) => {
   if (locationType === 'BRANCH') {
-    ctx.reply('Branch Location');
+    const result = await getClosestBranches(
+      5,
+      ctx.message.location.latitude,
+      ctx.message.location.longitude,
+    );
+    if (result) {
+      result.forEach((branch) => {
+        ctx.reply(branch);
+      });
+    }
   } else {
-    ctx.reply('ATM Location');
+    const result = await getClosestATMs(
+      5,
+      ctx.message.location.latitude,
+      ctx.message.location.longitude,
+    );
+    if (result) {
+      result.forEach((atm) => {
+        ctx.reply(atm);
+      });
+    }
   }
 });
 
