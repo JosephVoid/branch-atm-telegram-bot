@@ -7,8 +7,10 @@
   "scripts": {
     "start": "npm node index.js",
     "dev-lint": "nodemon --exec \"npm run lint && node index\"",
+    "dev-lint:fix": "nodemon --exec \"npm run lint:fix && node index\"",
     "dev": "nodemon index",
     "lint": "eslint ./*.js",
+    "lint:fix": "eslint ./*.js --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

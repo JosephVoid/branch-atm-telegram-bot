@@ -7,5 +7,6 @@ parserOptions:
   ecmaVersion: latest
 rules: {
   "import/no-import-module-exports": "off",
-  "import/extensions": "off"
+  "import/extensions": "off",
+  "no-await-in-loop": "off"
 }

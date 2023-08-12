@@ -6,6 +6,27 @@ dotenv.config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+async function displayResults(_bot, _ctx, result) {
+  for (let index = 0; index < result.length; index += 1) {
+    const element = result[index];
+    if (element.ENTITY.FID !== null) {
+      await _bot.telegram.sendPhoto(_ctx.chat.id, element.ENTITY.FID, {
+        caption: `🏢\t${element.ENTITY.LOCATION.toUpperCase()}
+      \n🚶🏾‍♂️\tDistance: ${(element.dist < 1 ? `${Math.round(element.dist * 100)} m` : `${element.dist} km`)}
+      \n🗺\thttps://maps.google.com/?q=${element.ENTITY.LATITIUDE},${element.ENTITY.LONGITUDE}`,
+      });
+    } else {
+      await _bot.telegram.sendMessage(_ctx.chat.id, `🏢\t${element.ENTITY.LOCATION.toUpperCase()}
+      \n🚶🏾‍♂️\tDistance: ${(element.dist < 1 ? `${Math.round(element.dist * 100)} m` : `${element.dist} km`)}
+      \n🗺\thttps://maps.google.com/?q=${element.ENTITY.LATITIUDE},${element.ENTITY.LONGITUDE}`);
+    }
+  }
+}
+
+// bot.catch((err) =>{
+//   console.log("Caught: "+err);
+// })
+
 let locationType;
 bot.command('start', async (ctx) => {
   ctx.reply(
@@ -62,9 +83,7 @@ bot.on('location', async (ctx) => {
       ctx.message.location.longitude,
     );
     if (result) {
-      result.forEach((branch) => {
-        ctx.reply(branch);
-      });
+      await displayResults(bot, ctx, result);
     }
   } else {
     const result = await getClosestATMs(
@@ -73,9 +92,7 @@ bot.on('location', async (ctx) => {
       ctx.message.location.longitude,
     );
     if (result) {
-      result.forEach((atm) => {
-        ctx.reply(atm);
-      });
+      await displayResults(bot, ctx, result);
     }
   }
 });
