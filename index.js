@@ -62,7 +62,11 @@ bot.hears('ATM', (ctx) => {
 });
 
 bot.on('photo', async (ctx) => {
-  if (process.env.ADMN === `${ctx.message.from.id}`) {
+  if (process.env.ADMN1 === `${ctx.message.from.id}` ||
+    process.env.ADMN2 === `${ctx.message.from.id}` ||
+    process.env.ADMN3 === `${ctx.message.from.id}` ||
+    process.env.ADMN4 === `${ctx.message.from.id}`
+  ) {
     const fileId = ctx.message.photo[0].file_id;
     const photoType = ctx.message.caption[0].toLocaleLowerCase() ?? '';
     const entityId = ctx.message.caption.split(' ')[1] ?? '';
