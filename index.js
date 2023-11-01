@@ -95,6 +95,12 @@ bot.on('location', async (ctx) => {
       await displayResults(bot, ctx, result);
     }
   }
+  ctx.reply(
+    '👆 Here are the closest 5.\n\nGet more location?',
+    Markup.keyboard([['Branch', 'ATM']])
+      .oneTime()
+      .resize(),
+  );
 });
 
 bot.launch();
